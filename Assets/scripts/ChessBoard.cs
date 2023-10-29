@@ -15,9 +15,6 @@ public class ChessBoard : MonoBehaviour
 
     bool chessboardIsCreated;
     bool isOnTheWhiteTileVariable;
-    //bool blackTilesAreFull = false;
-    //bool whiteTilesAreFull = false;
-    //bool canCreateApples = true;
 
     private int blackValue;
     private int whiteValue;
@@ -28,6 +25,9 @@ public class ChessBoard : MonoBehaviour
 
     public int randomIndex;
     public GameObject fullPanel;
+
+    public GameObject appleParent;
+    public GameObject tilesParent;
 
     private void Start()
     {
@@ -48,11 +48,19 @@ public class ChessBoard : MonoBehaviour
         if (value != 0 && chessboardIsCreated == false) //si hi ha un valor de tampany per es chessboard...
         {
             //set camera in the center of the chessBoard
-            Camera.main.transform.position = new Vector3(value / 2, value / 2, -10);
+            if(value <= 8)
+            {
+                Camera.main.transform.position = new Vector3(value / 2f, value / 2f, -10);
+            }
+            else
+            {
+                Camera.main.transform.position = new Vector3(value / 2f, value / 2f, -30);
+            }
 
             for (int y = value; y > 0; y--)
             {
-                if (y % 2 == 0) //si és parell
+                //if it's pair start with black tile, else, with 
+                if (y % 2 == 0) 
                 {
                     blackValue = value;
                     whiteValue = value - 1;
@@ -63,9 +71,9 @@ public class ChessBoard : MonoBehaviour
                     whiteValue = value;
                 }
 
-                for (int x = blackValue; x > 0; x -= 2) //mentre i sigui major que 0, anam baixant 2
+                for (int x = blackValue; x > 0; x -= 2) 
                 {
-                    //creació de sa tile black
+                    //BLACK TILE
                     GameObject blackTile = new GameObject("black Tile");
                     SpriteRenderer blackSpriteRenderer = blackTile.AddComponent<SpriteRenderer>();
                     blackSpriteRenderer.sprite = blackTileSprite;
@@ -76,11 +84,12 @@ public class ChessBoard : MonoBehaviour
                     //save tile position into the list
                     blackTilePositionsList.Add(blackTile.transform.position);
 
-                    //Debug.Log(blackTile.transform.position);
+                    //set the GO to an empty parent to organize
+                    blackTile.transform.SetParent(tilesParent.transform);
                 }
                 for (int x = whiteValue; x > 0; x -= 2)
                 {
-                    //creació de sa tile white
+                    //WHITE TILE
                     GameObject whiteTile = new GameObject("white Tile");
                     SpriteRenderer whiteSpriteRenderer = whiteTile.AddComponent<SpriteRenderer>();
                     whiteSpriteRenderer.sprite = whiteTileSprite;
@@ -91,7 +100,9 @@ public class ChessBoard : MonoBehaviour
                     //save tile position into the list
                     whiteTilePositionsList.Add(whiteTile.transform.position);
 
-                    //Debug.Log(whiteTile.transform.position)
+                    //set the GO to an empty parent to organize
+                    whiteTile.transform.SetParent(tilesParent.transform);
+
                 }
                 chessboardIsCreated = true;
             }
@@ -115,11 +126,18 @@ public class ChessBoard : MonoBehaviour
             GameObject appleFruitGO = new GameObject("apple Fruit");
             SpriteRenderer appleSpriteRenderer = appleFruitGO.AddComponent<SpriteRenderer>();
             appleSpriteRenderer.sprite = appleSprite;
-            //Renderer appleRenderer = appleFruitGO.AddComponent<Renderer>();
-            appleSpriteRenderer.sortingOrder = 10;
-            appleFruitGO.transform.position = randomPositionFruit;
 
-            if (isOnTheWhiteTileVariable == true)
+            //Sorting order --> in top of the tiles
+            appleSpriteRenderer.sortingOrder = 2;
+
+            //set the apple on the random tile
+            appleFruitGO.transform.position = randomPositionFruit;
+            
+            //set the GO to an empty parent to organize
+            appleFruitGO.transform.SetParent(appleParent.transform);
+
+            //if the apple is on the white tile +1 point , if is on the black +5
+            if (IsOnTheWhiteTile() == true)
             {
                 points++;
             }
@@ -130,13 +148,14 @@ public class ChessBoard : MonoBehaviour
 
             Debug.Log(points);
 
+            //remove the position where the apple has been created
             possiblePositionsToInstance.RemoveAt(randomIndex);
 
             yield return new WaitForSeconds(1);
         }
 
         fullPanel.SetActive(true);
-        //activam es panel de que tot està plè
+        //show the panel to indicate all the tiles are full
     }
 
 
@@ -147,13 +166,11 @@ public class ChessBoard : MonoBehaviour
 
         //set the apple position to the random pos
         randomPositionFruit = possiblePositionsToInstance[randomIndex];
-
-        isOnTheWhiteTileVariable = IsOnTheWhiteTile();
     }
 
     public bool IsOnTheWhiteTile()
     {
-        //si sa posició de sa poma està a sa llista white return true, else, return false
+        //if the apple position is into the white list return true, else, return false
         if (whiteTilePositionsList.Contains(randomPositionFruit))
         {
             return true;

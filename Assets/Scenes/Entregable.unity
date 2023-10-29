@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 504a0b43f84799a4583da1dfaf32271d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 4
+  value: 8
   blackTileSprite: {fileID: 21300000, guid: 0fd15d2b53ddb454db5b2d13c68ea8ae, type: 3}
   whiteTileSprite: {fileID: 21300000, guid: d971d16c34275e8478f3ee5176a9e668, type: 3}
   appleSprite: {fileID: 21300000, guid: 103a49ea926545147961ef58f15314bb, type: 3}
@@ -295,6 +295,8 @@ MonoBehaviour:
   possiblePositionsToInstance: []
   randomIndex: 0
   fullPanel: {fileID: 1291919485}
+  appleParent: {fileID: 892767886}
+  tilesParent: {fileID: 463324594}
 --- !u!4 &158627245
 Transform:
   m_ObjectHideFlags: 0
