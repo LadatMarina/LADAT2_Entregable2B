@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PiecesMovement : MonoBehaviour
 {
@@ -13,7 +15,6 @@ public class PiecesMovement : MonoBehaviour
 
     public List<Vector3> blackTilePositionsList;
     public List<Vector3> whiteTilePositionsList;
-    public List<Vector3> possiblePositionsToInstance;
 
     bool chessboardIsCreated;
 
@@ -24,26 +25,26 @@ public class PiecesMovement : MonoBehaviour
 
     #endregion
 
-    private Vector2Int CurrentCasella;
-    private Vector2Int DestinationCasella;
+    private Vector3 CurrentCasella;
+    private Vector3 DestinationCasella;
 
     private void Start()
     {
         blackTilePositionsList = new List<Vector3>();
         whiteTilePositionsList = new List<Vector3>();
-        possiblePositionsToInstance = new List<Vector3>();
 
         CreateChessBoard();
 
         //CREAR SA REINA AMB ES SEU SPRITE I TAL...
 
             //inicializam sa reina al seu lloc per defecte.
-        CurrentCasella = new Vector2Int(5,1); 
+        CurrentCasella = new Vector3(5,1,0); 
     }
     private void Update()
     {
+        
         //LÒGICA PER EMPLEAR
-        /*Vector2Int vector = SubstractionVector(DestinationCasella, CurrentCasella);
+        Vector3 vector = SubstractionVector(DestinationCasella, CurrentCasella);
         if ((vector.x == vector.y) || ((vector.x != 0) && (vector.y == 0)) || ((vector.x == 0) && (vector.y !=0)))
         {
             //se pot moure
@@ -51,7 +52,7 @@ public class PiecesMovement : MonoBehaviour
         else
         {
             //no se pot moure
-        }*/
+        }
     }
     private void CreateChessBoard()
     {
@@ -96,8 +97,10 @@ public class PiecesMovement : MonoBehaviour
                     blackTilePositionsList.Add(blackTile.transform.position);
 
                     //afegir-li sa component button per fer s'onClick --> m'agradaria fer lo de s'interactable, si tenc temps, ho cercaré, sinó, no fa falta
+                    blackTile.AddComponent<Button>();
 
-
+                    //add collider
+                    blackTile.AddComponent<BoxCollider2D>();
                     //set the GO to an empty parent to organize
                     blackTile.transform.SetParent(tilesParent.transform);
                 }
@@ -127,13 +130,33 @@ public class PiecesMovement : MonoBehaviour
         }
     }
 
-    
 
-    private Vector2Int SubstractionVector(Vector2Int destination, Vector2Int currentPosition)
+    private Vector3 SubstractionVector(Vector3 destination, Vector3 currentPosition)
     {
-        return new Vector2Int(destination.x - currentPosition.x, destination.y - currentPosition.y);
+        return new Vector3(destination.x - currentPosition.x, destination.y - currentPosition.y,0);
     }
 
-    
+    private void MoveQueen(Vector3 posToMove)
+    {
+        CurrentCasella = DestinationCasella;
+    }
 
+    private void OnMouseDown()
+    {
+        DestinationCasella = gameObject.transform.position; //mirar si s'ha fet lo que vullç
+        Vector3 vector = SubstractionVector(DestinationCasella, CurrentCasella);
+        if ((vector.x == vector.y) || ((vector.x != 0) && (vector.y == 0)) || ((vector.x == 0) && (vector.y != 0)))
+        {
+            //se pot moure
+            Debug.Log("CAN MOVE");
+            MoveQueen(DestinationCasella);
+        }
+        else
+        {
+            Debug.Log("NOOOOOOOOOOOOO");
+
+            //no se pot moure
+        }
+
+    }
 }
